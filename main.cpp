@@ -1,14 +1,20 @@
 #include<stdio.h>
-#include<stdlib.h>
 
-#include"Headers/cpu.hpp"
-#include"Headers/ram.hpp"
+#include"../Headers/cpu.hpp"
+#include"../Headers/ram.hpp"
 
 int main() {
-    CPU cpu;
-    RAM ramUnit;
+    CPU_UNIT cpu;
+    RAM_UNIT ramUnit;
 
-    BYTE* ram = ramUnit.initRam(65535);
+    RAM ram = ramUnit.initRam(65535);
+    cpu.initCPU(ram);
+
+    ram[0]=0x23;
+
+    cpu.startCycle(4);
+
+    printf("%d\n", cpu.bRegs.HL);
 
     ramUnit.clearRam(ram);
     return 0;
