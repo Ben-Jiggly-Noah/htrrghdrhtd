@@ -1,21 +1,17 @@
 #include<stdio.h>
-
-#include"../Headers/cpu.hpp"
 #include"../Headers/ram.hpp"
+#include"../Headers/cpu.hpp"
 
 int main() {
-    CPU_UNIT cpu;
+    CPU_UNIT cpuUnit;
+
     RAM_UNIT ramUnit;
+    initRam(ramUnit, 65535);
 
-    RAM ram = ramUnit.initRam(65535);
-    cpu.initCPU(ram);
+    // Set some code examples here
+    ramUnit.writeAddress(0x0000, 69);
 
-    ram[0]=0x23;
+    cpuUnit.startCycle(1, ramUnit);
 
-    cpu.startCycle(4);
-
-    printf("%d\n", cpu.bRegs.HL);
-
-    ramUnit.clearRam(ram);
-    return 0;
+    ramUnit.freeRam();
 }
