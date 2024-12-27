@@ -1,7 +1,7 @@
 #include<string.h>
 #include<stdio.h>
 
-#include<../Headers/instructions.hpp>
+#include<C:\Users\jeffr\Desktop\Z80 Emu\Headers\instructions.hpp>
 
 // Sizes
 using BYTE = unsigned char;
@@ -21,10 +21,6 @@ struct registers {
 
 // Cpu Unit
 struct CPU_UNIT {
-    // Emulator Properties
-    BYTE incorrectCodeByte=0;
-    WORD incorrectCodeWord=0;
-
     // Registers
     registers regA;
     registers regB;
@@ -50,7 +46,8 @@ struct CPU_UNIT {
         else if (registerName=='H') return &currReg.H;
         else if (registerName=='L') return &currReg.L;
 
-        return &incorrectCodeByte;
+        printf("Invalid Register: %c\n", registerName);
+        exit(1);
     }
     // Get Word Register
     WORD* getWordReg(char* registerName) {
@@ -59,7 +56,8 @@ struct CPU_UNIT {
         else if (strcmp("DE", registerName)) return &currReg.DE;
         else if (strcmp("HL", registerName)) return &currReg.HL;
 
-        return &incorrectCodeWord;
+        printf("Invalid Register: %s\n", registerName);
+        exit(1);
     }
 
     BYTE fetchByte(WORD &cycles, RAM_UNIT ram) {
@@ -69,16 +67,40 @@ struct CPU_UNIT {
         return data;
     }
 
-    void startCycle(WORD cycles, RAM_UNIT ram) {
+    int startCycle(WORD cycles, RAM_UNIT ram) {
         while (cycles>0) {
             BYTE opcode = fetchByte(cycles, ram);
+            printf("Byte %d: 0x%x\n", PC-1, opcode);
+
+            // Encoding
+            int i=0;
+            for (i=0; INSTRUCTIONS[i][0]==opcode; i++) {
+                if (i==instructionsLength) {
+                    printf("Invalid Instruction at %d: %x\n", PC-1, opcode);
+                    return 1;
+                }
+            }
+
+            CONST_BYTE* instrData = INSTRUCTIONS[i];
             cycles--;
 
-            printf("Byte %d: %d\n", PC-1, opcode);
+            // Looking for extra bytes
+            BYTE* operands = (BYTE*)malloc(0);
 
-            // Decode the opcode
+            for (int i=0; i<instrData[1]; i++) {
+                BYTE operand = fetchByte(cycles, ram);
+                printf("Byte %d: 0x%x, Operand %d/%d for byte %d\n", PC-1, operand, i+1, instrData[1], PC-1-(i+1));
+
+                operands=(BYTE*)realloc(operands,i+1);
+                operands[i]=operand;
+            }
+
+            // Do encoding for operands
+
+            free(operands);
+            operands = NULL;
         }
-        
-    }
 
+        return 0;
+    }
 };
