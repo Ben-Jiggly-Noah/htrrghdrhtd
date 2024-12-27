@@ -6,12 +6,14 @@ int main() {
     CPU_UNIT cpuUnit;
 
     RAM_UNIT ramUnit;
-    initRam(ramUnit, 65535);
+    initRam(ramUnit, 256);
 
     // Set some code examples here
-    ramUnit.writeAddress(0x0000, 69);
+    ramUnit.writeAddress(0x0000, 0x69);
+    ramUnit.writeAddress(0x0001, 0x42);
+    ramUnit.writeAddress(0x0002, 0xF0);
 
-    cpuUnit.startCycle(1, ramUnit);
+    cpuUnit.startCycle(12, ramUnit);
 
     ramUnit.freeRam();
 }
