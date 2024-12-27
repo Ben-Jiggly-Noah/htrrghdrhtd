@@ -1,7 +1,7 @@
 #include<string.h>
 #include<stdio.h>
 
-#include<C:\Users\jeffr\Desktop\Z80 Emu\Headers\instructions.hpp>
+#include<../Headers/instructions.hpp>
 
 // Sizes
 using BYTE = unsigned char;
